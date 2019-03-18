@@ -1,28 +1,25 @@
-function post_query(url, name, data){
-    var str= "";
-
-    $.each(data.split('.'), function(k, v){
-        str += '&' + v +"=" + $('#'+v).val();
-    });
-
-    $.ajax({
-        url: '/' + url,
-        type: 'POST',
-        data: nane + "_f=1" + str,
-        cache: false,
-        success: function(result){
-            obj = JQuery.parseJSON(result)
-
-            if(obj.url){
-                go(obj.url);
-            }
-            else{
-                alert(obj.message);
-            }
+$(document).ready(function(){
+    $('form').submit(function(event){
+        if($(this).attr('id') == 'no_ajax'){
+            return;
         }
+        var json;
+        event.preventDefault();
+        $.ajax({
+            type: $(this).attr('method'),
+            url: $(this).attr('action'),
+            data: new FormData(),
+            contentType: false,
+            cache: false,
+            processData: false,
+            success: function(result){
+                json = jQuery.parseJSON(result);
+                if(json.url){
+                    window.location.href='/'+json.url;
+                }else{
+                    alert(json.status+' - '+json.nessage);
+                }
+            },
+        });
     });
-}
-
-function go(url){
-    return window.location.href='/' + url;
-}
+});
